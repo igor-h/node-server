@@ -1,25 +1,35 @@
 // Requires
 var express = require('express');
 var mongoose = require('mongoose');
+var bodyParser = require('body-parser');
 
 // Init variables
 var app = express();
 
+// Body Parser
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
+
+// Import routes
+var appRoutes = require('./routes/app');
+var userRoutes = require('./routes/user');
+
 // Connect to mongo DB
-mongoose.connection.openUri('mongodb:localhost:27017/hospitalDB', (err, response) =>{
+mongoose.connection.openUri('mongodb://localhost:27017/hospitalDB', (err, response) =>{
 
     if( err) throw err;
 
-    onsole.log('Mongo - hospitalDB - Status: \x1b[32m%s\x1b[0m', 'online')
+    console.log('Mongo - hospitalDB - Status: \x1b[32m%s\x1b[0m', 'online')
 });
 
-// API Routes
-app.get('/', (req,res, next) =>{
-    res.status(200).json({
-        ok: true,
-        message: 'Correcto'
-    });
-});
+
+// Routes
+app.use('/user', userRoutes);
+app.use('/', appRoutes);
+
 
 // Listeners of all petitions - port:3000
 app.listen(3000, () => {
