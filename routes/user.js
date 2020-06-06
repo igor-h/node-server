@@ -40,10 +40,22 @@ app.post('/', (req,res) => {
         role: body.role 
     });
     
-    res.status(200).json({
-        ok:true,
-        data: body
+    user.save( ( err, savedUserResponse ) => {
+
+        if(err){
+            return res.status(500).json({
+                ok: false,
+                message: 'Error creating new user',
+                errors: err
+            });
+        }
+
+        res.status(201).json({
+            ok:true,
+            data: savedUserResponse
+        })
     })
+    
 
 });
 
